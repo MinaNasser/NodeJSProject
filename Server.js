@@ -20,6 +20,10 @@ app.use(notFound);
 app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
+app.use(express.json()); // <-- مهم جدًا لقراءة JSON من body
+app.use(express.urlencoded({ extended: true }));
 app.listen(PORT, () => {
   console.log(`✅ Server running on port ${PORT}`);
 });
+
+
