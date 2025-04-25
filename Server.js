@@ -1,7 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
-const videoRoutes = require("./routes/videoRoutes"); // ✅ تأكدي من الاسم
+const videoRoutes = require("./routes/videoRoutes"); 
 const routes = require("./routes/Route");
 
 const app = express();
@@ -12,8 +12,11 @@ connectDB();
 app.use(express.json());
 
 app.use("/api", routes);
-app.use("/api/videos", videoRoutes); // ✅ استخدمي المتغير الصحيح
-app.use("/api/users", require("./routes/userRoutes")); // ✅ تأكدي من الاسم
+app.use("/api/videos", videoRoutes);
+app.use("/api/users", require("./routes/userRoutes")); 
+app.use("/api/likes", require("./routes/LikeDislikeRoutes"));
+// app.use("/api/comments", require("./routes/commentRoutes"));
+app.use("/api/replies", require("./routes/ReplayRoutes"));
 app.use((req, res, next) => {
   res.status(404).json({ message: "Route not found" });
 });
