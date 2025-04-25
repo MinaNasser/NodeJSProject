@@ -13,7 +13,7 @@ connectDB();
 app.use(express.json());
 
 // الراوتس
-const routes = require("./routes/index");
+const routes = require("../routes/Route");
 app.use("/api", routes);
 
 // تشغيل السيرفر
