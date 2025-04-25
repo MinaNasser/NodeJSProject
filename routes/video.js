@@ -1,9 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const videoControoller = require("../controllers/videoController");
-const validateRequest = require("../middlewares/validationRequest");
-const videoSchema = require("../schemas/videoSchema"); // استيراد الـ Joi Schema
-const { default: videoValidationSchema } = require("../schemas/videoSchema");
 
 // Create a new video
 router.post("/",  videoControoller.uploadVideo);

@@ -1,10 +1,9 @@
-import Joi from 'joi';
+const Joi = require("joi");
 
 const videoValidationSchema = Joi.object({
-  title: Joi.string().required().trim(),
-  description: Joi.string().optional(),
-  videoUrl: Joi.string().uri().required(),
-  tags: Joi.array().items(Joi.string()).optional(),
+  title: Joi.string().required(),
+  description: Joi.string().required(),
+  userId: Joi.string().required()
 });
 
-export default videoValidationSchema;
+module.exports = videoValidationSchema;
