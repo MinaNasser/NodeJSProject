@@ -1,14 +1,16 @@
 const mongoose = require("mongoose");
+const dotenv = require("dotenv");
 
-const MONGO_URI = "mongodb://localhost:27017/Tiktok"
 
-  const connectDB = async () => {
+dotenv.config();
+
+const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
-    console.log("✅ MongoDB connected");
+    console.log("MongoDB connected");
   } catch (err) {
-    console.error("❌ Error connecting to MongoDB:", err.message);
-    process.exit(1);
+    console.error("Error connecting to MongoDB:", err.message);
+    process.exit(1); 
   }
 };
 
