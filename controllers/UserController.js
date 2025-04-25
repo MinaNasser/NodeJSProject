@@ -3,9 +3,6 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
-
-
-
 const register = async (req,res) => {
   if (!req.body) {
     return res.status(400).json({ error: "Missing request body" });
@@ -102,4 +99,4 @@ const login = async (req,res)=>{
 
 }
 
-module.exports = { register , login , verifyEmail };
+module.exports = { register , login  };
