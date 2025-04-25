@@ -1,6 +1,7 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const connectDB = require("./db");
+const videoRoutes = require("../routes/videoRoutes");
 const app = express();
 
 // تحميل متغيرات البيئة
@@ -15,6 +16,7 @@ app.use(express.json());
 // الراوتس
 const routes = require("../routes/Route");
 app.use("/api", routes);
+app.use("/api/videos", videoRoutes);
 
 // تشغيل السيرفر
 const PORT = process.env.PORT || 5000;
