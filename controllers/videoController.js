@@ -57,3 +57,13 @@ exports.deleteVideo = async (req, res) => {
   }
 };
 
+// Get videos by user ID
+exports.getUserVideos = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const videos = await Video.find({ user: userId }).populate("user", "username email");
+    res.status(200).json(videos);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};

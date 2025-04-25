@@ -16,5 +16,8 @@ router.put("/:id", videoController.updateVideo);
 
 // Delete a video by ID
 router.delete("/:id", videoController.deleteVideo);
+// Get all videos for a specific user
+router.get("/user/:userId", videoController.getUserVideos);
+
 
 module.exports = router;
