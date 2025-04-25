@@ -12,7 +12,7 @@ const videoSchema = new mongoose.Schema({
     required: true
   },
   smallimg: { type: String },
-  tags: [String],
+  // tags: [String],
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

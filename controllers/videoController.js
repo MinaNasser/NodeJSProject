@@ -11,13 +11,21 @@ exports.uploadVideo = async (req, res) => {
       public_id: `videos/${req.file.filename}`,  // تعيين اسم الفيديو في Cloudinary
       overwrite: true  // استبدال الفيديو بنفس الاسم إذا كان موجودًا
     });
+    const smallimg = await cloudinary.uploader.upload(req.file.path, {
+      resource_type: "image",  // تحديد نوع المحتوى كـ فيديو
+      public_id: `images/${req.file.filename}`,  // تعيين اسم الفيديو في Cloudinary
+      overwrite: true  // استبدال الفيديو بنفس الاسم إذا كان موجودًا
+    });
 
     // إنشاء كائن فيديو جديد
     const newVideo = new Video({
       title: req.body.title,  // أخذ العنوان من الـ body
       description: req.body.description,  // أخذ الوصف من الـ body
       videoUrl: result.secure_url,  // رابط الفيديو من Cloudinary
-      user: req.body.userId  // ربط الفيديو بالمستخدم
+      user: req.body.userId , // ربط الفيديو بالمستخدم
+      smallimg: smallimg.secure_url, // رابط الصورة المصغرة من Cloudinary
+      tags: req.body.tags,  // أخذ العلامات من الـ body
+      
     });
 
     // حفظ الفيديو في قاعدة البيانات

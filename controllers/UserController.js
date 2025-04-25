@@ -2,7 +2,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
-
+const cloudinary = require("../config/Cloudinary");
 
 const verifyEmail = async (req, res) => {
     const token = req.params.token;
@@ -21,17 +21,24 @@ const verifyEmail = async (req, res) => {
 
 
 const register = async (req,res) => {
+  if (!req.body) {
+    return res.status(400).json({ error: "Missing request body" });
+  }
     const{
 
-        username,
+      username,
         email,
         password,
         phoneNumber,
-        avatar,
         bio,
         socialLinks
     } = req.body
-
+    const result = await cloudinary.uploader.upload(req.file.path, {
+          resource_type: "image",  // تحديد نوع المحتوى كـ فيديو
+          public_id: `images/${req.file.filename}`,  // تعيين اسم الفيديو في Cloudinary
+          overwrite: true,  // استبدال الفيديو بنفس الاسم إذا كان موجودًا
+          
+        });
 
 try {
     const existingUser = await User.findOne({email});
@@ -42,21 +49,21 @@ try {
     const HashPassword = await bcrypt.hash(password,10);
 
     const newUser = new User({
-        username,
-        email,
-        password: HashPassword,
-        phoneNumber,
-        avatar: avatar || "", 
-        bio: bio || "",       
-        isEmailVerified: false, 
-        socialLinks: {
+      username,
+      email,
+      password: HashPassword,
+      phoneNumber,
+      avatar: result.secure_url,  // Store the avatar URL
+      bio: bio || "",
+      isEmailVerified: false,
+      socialLinks: {
           instagram: socialLinks?.instagram || "",
           tiktok: socialLinks?.tiktok || "",
           youtube: socialLinks?.youtube || ""
-        },
-        role: "user",
-        isBlocked: false
-      });
+      },
+      role: "user",
+      isBlocked: false
+  });
 
     await newUser.save();
 
@@ -74,7 +81,7 @@ try {
 
 }
 catch(error){
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: error.message });
 };
 }
 
@@ -119,4 +126,4 @@ const login = async (req,res)=>{
 
 }
 
-module.exports = { register , login};
+module.exports = { register , login , verifyEmail };

@@ -17,8 +17,17 @@ const VideoStorage = new cloudinaryStorage({
     resource_type: "video"  // specify that we are uploading videos
   }
 });
+const ImageStorage = new cloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: "images",
+    allowedFormats: ["jpg", "jpeg", "png"],
+    resource_type: "image"
+  }
+});
 
 // create multer to save videos to Cloudinary
-const upload = multer({ storage: VideoStorage });  // Use VideoStorage here
+const upload = multer({ storage: VideoStorage  });  // Use VideoStorage here
+const uploadImage = multer({ storage: ImageStorage });
 
-module.exports = upload;
+module.exports = {upload, uploadImage};
