@@ -1,39 +1,36 @@
-const cloudinary = require("../config/Cloudinary"); // استيراد إعدادات Cloudinary
-const Video = require("../models/Video");  // استيراد موديل الفيديوهات من MongoDB
+const cloudinary = require("../config/Cloudinary");
+const Video = require("../models/Video");
 const Comment = require("../models/Comment");
 
-// رفع فيديو
+// ✅ رفع فيديو إلى Cloudinary وحفظه في MongoDB
 exports.uploadVideo = async (req, res) => {
   try {
-    // رفع الفيديو إلى Cloudinary
+    console.log("📥 File received:", req.file);
+    console.log("📥 Body received:", req.body);
+
     const result = await cloudinary.uploader.upload(req.file.path, {
-      resource_type: "video",  // تحديد نوع المحتوى كـ فيديو
-      public_id: `videos/${req.file.filename}`,  // تعيين اسم الفيديو في Cloudinary
-      overwrite: true  // استبدال الفيديو بنفس الاسم إذا كان موجودًا
+      resource_type: "video",
+      public_id: `videos/${Date.now()}`,
+      overwrite: true
     });
 
-    // إنشاء كائن فيديو جديد
     const newVideo = new Video({
-      title: req.body.title,  // أخذ العنوان من الـ body
-      description: req.body.description,  // أخذ الوصف من الـ body
-      videoUrl: result.secure_url,  // رابط الفيديو من Cloudinary
-      user: req.body.userId  // ربط الفيديو بالمستخدم
+      title: req.body.title,
+      description: req.body.description,
+      videoUrl: result.secure_url,
+      user: req.body.userId
     });
 
-    // حفظ الفيديو في قاعدة البيانات
     await newVideo.save();
 
-    // الرد على العميل بنجاح رفع الفيديو
     res.status(201).json({ message: "Video uploaded successfully", video: newVideo });
-
   } catch (err) {
-    // في حالة حدوث خطأ أثناء رفع الفيديو
-    res.status(500).json({ message: err.message });
+    console.error("🔥 Upload error:", err);
+    res.status(500).json({ message: "Internal Server Error", error: err.message });
   }
 };
 
-
-// Get all videos
+// ✅ إرجاع جميع الفيديوهات
 exports.getAllVideos = async (req, res) => {
   try {
     const videos = await Video.find().populate("user", "username email");
@@ -43,7 +40,7 @@ exports.getAllVideos = async (req, res) => {
   }
 };
 
-// Get a video by ID
+// ✅ إرجاع فيديو واحد عن طريق ID
 exports.getVideoById = async (req, res) => {
   try {
     const video = await Video.findById(req.params.id).populate("user", "username email");
@@ -54,7 +51,7 @@ exports.getVideoById = async (req, res) => {
   }
 };
 
-// Update a video
+// ✅ تحديث فيديو
 exports.updateVideo = async (req, res) => {
   try {
     const video = await Video.findByIdAndUpdate(req.params.id, req.body, {
@@ -68,7 +65,7 @@ exports.updateVideo = async (req, res) => {
   }
 };
 
-// Delete a video
+// ✅ حذف فيديو
 exports.deleteVideo = async (req, res) => {
   try {
     const video = await Video.findByIdAndDelete(req.params.id);
@@ -79,7 +76,7 @@ exports.deleteVideo = async (req, res) => {
   }
 };
 
-// Get videos by user ID
+// ✅ جلب فيديوهات مستخدم معين
 exports.getUserVideos = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -90,17 +87,14 @@ exports.getUserVideos = async (req, res) => {
   }
 };
 
-
-
-// Add like to a video
+// ✅ إضافة لايك لفيديو
 exports.addLike = async (req, res) => {
   try {
     const video = await Video.findById(req.params.id);
     if (!video) return res.status(404).json({ error: "Video not found" });
 
-    // Assuming the user is authenticated and their ID is available as req.user.id
-    if (!video.likes.includes(req.user.id)) {
-      video.likes.push(req.user.id);
+    if (!video.likes.includes(req.user.userId)) {
+      video.likes.push(req.user.userId);
       await video.save();
       res.status(200).json(video);
     } else {
@@ -111,13 +105,13 @@ exports.addLike = async (req, res) => {
   }
 };
 
-// Remove like from a video
+// ✅ إزالة لايك من فيديو
 exports.removeLike = async (req, res) => {
   try {
     const video = await Video.findById(req.params.id);
     if (!video) return res.status(404).json({ error: "Video not found" });
 
-    const likeIndex = video.likes.indexOf(req.user.id);
+    const likeIndex = video.likes.indexOf(req.user.userId);
     if (likeIndex > -1) {
       video.likes.splice(likeIndex, 1);
       await video.save();
@@ -130,7 +124,7 @@ exports.removeLike = async (req, res) => {
   }
 };
 
-// Get comments for a specific video
+// ✅ جلب التعليقات لفيديو معين
 exports.getCommentsForVideo = async (req, res) => {
   try {
     const comments = await Comment.find({ video: req.params.id }).populate("user", "username email");
@@ -139,4 +133,3 @@ exports.getCommentsForVideo = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-

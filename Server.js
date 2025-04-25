@@ -2,8 +2,9 @@ const express = require("express");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const { notFound, errorHandler } = require("./middlewares/errorMiddlewares");
-const videoRoutes = require("./routes/video"); // ✅ تأكدي من الاسم
+const videoRoutes = require("./routes/vidroutes"); // ✅ تأكدي من الاسم
 const routes = require("./routes/Route");
+const userRoutes = require("./routes/userRoutes"); // أو المسار حسب مكان الملف
 
 const app = express();
 
@@ -14,7 +15,7 @@ app.use(express.json());
 
 app.use("/api", routes);
 app.use("/api/videos", videoRoutes); // ✅ استخدمي المتغير الصحيح
-
+app.use("/api/users", userRoutes);
 app.use(notFound);
 app.use(errorHandler);
 

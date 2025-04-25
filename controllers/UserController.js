@@ -4,20 +4,6 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
 
-const verifyEmail = async (req, res) => {
-    const token = req.params.token;
-  
-    try {
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const userId = decoded.userId;
-  
-      await User.findByIdAndUpdate(userId, { isEmailVerified: true });
-  
-      res.status(200).send("Email verified successfully!");
-    } catch (err) {
-      res.status(400).send("Invalid or expired token");
-    }
-  };
 
 
 const register = async (req,res) => {
@@ -48,7 +34,7 @@ try {
         phoneNumber,
         avatar: avatar || "", 
         bio: bio || "",       
-        isEmailVerified: false, 
+        isEmailVerified: true, 
         socialLinks: {
           instagram: socialLinks?.instagram || "",
           tiktok: socialLinks?.tiktok || "",
@@ -59,17 +45,7 @@ try {
       });
 
     await newUser.save();
-
-    const jwt = require("jsonwebtoken");
-    const token = jwt.sign(
-        { userId: newUser._id },
-        process.env.JWT_SECRET,
-        { expiresIn: "1d" }
-      );
       
-      const verifyLink = `http://localhost:5000/api/users/verify-email/${token}`;
-      console.log(`📩 Email Verification Link:${verifyLink}`);
-
     res.status(201).json({ message: "User registered successfully", user: newUser });
 
 }
