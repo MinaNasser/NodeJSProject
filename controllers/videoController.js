@@ -3,7 +3,7 @@ const Video = require("../models/Video");  // استيراد موديل الفي
 const Comment = require("../models/Comment");
 
 // رفع فيديو
-const uploadVideo = async (req, res) => {
+exports.uploadVideo = async (req, res) => {
   try {
     // رفع الفيديو إلى Cloudinary
     const result = await cloudinary.uploader.upload(req.file.path, {
@@ -139,6 +139,4 @@ exports.getCommentsForVideo = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-module.exports = {
-  uploadVideo
-};
+
